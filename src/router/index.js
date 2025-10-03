@@ -12,7 +12,8 @@ const routes = [
   { path: '/stats', name: 'stats', component: StatsView, meta: { requiresAuth: true } },
   { path: '/classement', name: 'classement', component: ClassementView, meta: { requiresAuth: true } },
   { path: '/auth', name: 'auth', component: AuthView, meta: { guest: true } },
-  { path: '/admin', name: 'admin', component: AdminView, meta: { requiresAuth: true } }
+  { path: '/admin', name: 'admin', component: AdminView, meta: { requiresAuth: true } },
+  { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
 
 const router = createRouter({

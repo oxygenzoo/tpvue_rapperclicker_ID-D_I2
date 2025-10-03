@@ -1,5 +1,8 @@
 <template>
   <div class="auth-container">
+    <!-- Logo au-dessus du titre -->
+    <img src="../assets/logo.png" alt="Logo Rapper Clicker" class="auth-logo" />
+
     <h1 class="title">Rapper Clicker</h1> 
     <p class="subtitle">
       Deviens une star du rap en collectant des fans, en achetant des améliorations et en montant dans le classement !
@@ -57,6 +60,14 @@ function soumettre() {
   text-align: center;
   padding: 40px;
   color: #fff;
+}
+
+/* Logo centré */
+.auth-logo {
+  width: 120px;  /* adapte la taille */
+  height: auto;
+  display: block;
+  margin: 0 auto 20px; /* centre + espace en bas */
 }
 
 .title {

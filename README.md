@@ -33,23 +33,23 @@ Purge globale des données.
 ## Installation
 
 Cloner le projet :
-
+```
 git clone https://github.com/ton-projet/rapper-clicker.git
 cd rapper-clicker
-
+```
 
 Installer les dépendances :
-
+```
 npm install
-
+```
 
 Lancer le serveur de développement :
-
+```
 npm run dev
-
+```
 
 Ouvrir le projet sur http://localhost:5173
-.
+
 
 Technologies utilisées
 
@@ -66,6 +66,7 @@ Vite
  (build et serveur de dev)
 
 Structure du projet
+```
 src/
 │
 ├── assets/          # Images et logo
@@ -74,6 +75,7 @@ src/
 ├── views/           # Pages principales (Home, Stats, Classement, Admin, Auth)
 ├── App.vue          # Point d'entrée principal
 └── main.js          # Setup Vue, Router et Pinia
+```
 
 Auteurs
 

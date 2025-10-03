@@ -1,6 +1,6 @@
 <template>
   <div class="auth-container">
-    <h1 class="title">🎤 Rapper Clicker</h1>
+    <h1 class="title">Rapper Clicker</h1> 
     <p class="subtitle">
       Deviens une star du rap en collectant des fans, en achetant des améliorations et en montant dans le classement !
     </p>
@@ -32,7 +32,7 @@ import { useRouter } from 'vue-router'
 const store = useGameStore()
 const router = useRouter()
 
-const mode = ref("login") // par défaut connexion
+const mode = ref("login")
 const pseudo = ref("")
 const password = ref("")
 const erreur = ref("")
@@ -43,9 +43,9 @@ function soumettre() {
       store.login(pseudo.value, password.value)
     } else {
       store.register(pseudo.value, password.value)
-      store.login(pseudo.value, password.value) // auto login après inscription
+      store.login(pseudo.value, password.value)
     }
-    router.push("/") // redirection vers Home
+    router.push("/")
   } catch (e) {
     erreur.value = e.message
   }
@@ -61,9 +61,8 @@ function soumettre() {
 
 .title {
   font-size: 2.5rem;
-  color: #ff005c;
+  color: #fff;
   margin-bottom: 10px;
-  text-shadow: 0 0 10px #ff005c, 0 0 20px #ff4da6;
 }
 
 .subtitle {
@@ -90,7 +89,6 @@ function soumettre() {
 
 .toggle-buttons button.active {
   background: #ff005c;
-  box-shadow: 0 0 10px #ff005c;
 }
 
 .form {

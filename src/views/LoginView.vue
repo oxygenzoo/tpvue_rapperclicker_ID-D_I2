@@ -1,10 +1,7 @@
 <template>
   <div class="login-container">
-    <h1>🔑 Connexion / Inscription</h1>
-
     <div class="form-card">
-      <h2 v-if="mode === 'login'">Connexion</h2>
-      <h2 v-else>Inscription</h2>
+      <h1>{{ mode === 'login' ? 'Connexion' : 'Inscription' }}</h1>
 
       <input v-model="pseudo" placeholder="Pseudo" />
       <input v-model="password" type="password" placeholder="Mot de passe" />
@@ -23,10 +20,8 @@
         </span>
       </p>
 
-      <p v-if="store.utilisateurActif">
-        ✅ Connecté en tant que <b>{{ store.utilisateurActif.pseudo }}</b>
-        (rôle : {{ store.utilisateurActif.role }})
-      </p>
+      <p v-if="erreur" class="error">{{ erreur }}</p>
+      <p v-if="message" class="success">{{ message }}</p>
     </div>
   </div>
 </template>
@@ -42,55 +37,71 @@ const router = useRouter()
 const pseudo = ref("")
 const password = ref("")
 const mode = ref("login")
+const erreur = ref("")
+const message = ref("")
 
 function login() {
   try {
     store.login(pseudo.value, password.value)
-    alert("Connexion réussie !")
-    router.push("/") // redirige vers le jeu
+    message.value = "Connexion réussie"
+    erreur.value = ""
+    router.push("/")
   } catch (e) {
-    alert(e.message)
+    erreur.value = e.message
+    message.value = ""
   }
 }
 
 function register() {
   try {
     store.register(pseudo.value, password.value)
-    alert("Inscription réussie, connecte-toi maintenant.")
+    message.value = "Inscription réussie, tu peux maintenant te connecter"
+    erreur.value = ""
     mode.value = "login"
   } catch (e) {
-    alert(e.message)
+    erreur.value = e.message
+    message.value = ""
   }
 }
 </script>
 
 <style scoped>
 .login-container {
-  text-align: center;
-  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #000;
   color: #fff;
 }
 
 .form-card {
   background: #111;
-  border: 2px solid #ff005c;
+  border: 1px solid #ff005c;
   border-radius: 12px;
-  padding: 20px;
-  width: 300px;
-  margin: auto;
+  padding: 30px;
+  width: 100%;
+  max-width: 350px;
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 20px;
 }
 
 input {
   display: block;
   margin: 10px auto;
-  padding: 8px;
+  padding: 10px;
   width: 90%;
   border-radius: 8px;
-  border: none;
+  border: 1px solid #333;
+  background: #222;
+  color: #fff;
 }
 
 button {
-  margin-top: 10px;
+  margin-top: 15px;
   padding: 10px;
   width: 100%;
   border-radius: 8px;
@@ -98,6 +109,10 @@ button {
   border: none;
   color: white;
   cursor: pointer;
+  transition: background 0.2s ease;
+}
+button:hover {
+  background: #e60050;
 }
 
 .switch {
@@ -105,7 +120,16 @@ button {
   font-size: 14px;
 }
 .switch a {
-  color: #ff005c;
+  color: #ff66b2;
   cursor: pointer;
+}
+
+.error {
+  margin-top: 10px;
+  color: red;
+}
+.success {
+  margin-top: 10px;
+  color: #4caf50;
 }
 </style>

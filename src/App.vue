@@ -9,7 +9,6 @@
 import Navbar from './components/Navbar.vue'
 </script>
 
-
 <style>
 body {
   margin: 0;
@@ -21,26 +20,24 @@ body {
 
 h1 {
   color: #ff005c;
-  text-shadow: 0 0 10px #ff005c, 0 0 20px #ff4da6;
   margin-top: 20px;
 }
 
 button {
   background: #222;
   border: 2px solid #ff005c;
-  border-radius: 12px;
+  border-radius: 8px;
   color: white;
   font-size: 1rem;
-  padding: 12px 20px;
+  padding: 10px 16px;
   margin: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, transform 0.1s ease;
 }
 
 button:hover {
   background: #ff005c;
   color: #fff;
-  transform: scale(1.05);
-  box-shadow: 0 0 15px #ff005c;
+  transform: scale(1.03);
 }
 </style>

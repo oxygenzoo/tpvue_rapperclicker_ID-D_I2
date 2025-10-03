@@ -1,81 +1,93 @@
 <template>
   <div class="classement-container">
-    <h1>🏆 Classement des joueurs</h1>
+    <h1>Classement des joueurs</h1>
 
-    <ol class="leaderboard">
-      <li v-for="j in store.classement" :key="j.pseudo">
-        <span class="pseudo">{{ j.pseudo }}</span>
-        <span class="score">{{ j.score }} fans</span>
+    <!-- Bouton pour enregistrer son score -->
+    <div class="save-score">
+      <button class="btn-save" @click="enregistrerMonScore">Enregistrer mon score</button>
+    </div>
 
-        <!-- Défi (visible si pas soi-même et connecté) -->
-        <button
-          v-if="store.utilisateurActif && j.pseudo !== store.utilisateurActif.pseudo"
-          class="defi"
-          @click="defier(j.pseudo)"
-        >
-          Défi
-        </button>
+    <table>
+      <thead>
+        <tr>
+          <th>Position</th>
+          <th>Pseudo</th>
+          <th>Score</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(j, index) in store.classement" :key="j.pseudo">
+          <td>{{ index + 1 }}</td>
+          <td>{{ j.pseudo }}</td>
+          <td>{{ j.score }}</td>
+          <td>
+            <div v-if="store.utilisateurActif && j.pseudo !== store.utilisateurActif.pseudo">
+              <!-- Si déjà un défi en cours -->
+              <button
+                v-if="aDejaDefie(j.pseudo)"
+                class="btn-cancel"
+                @click="annulerDefi(j.pseudo)"
+              >
+                Annuler défi
+              </button>
 
-        <!-- Outils admin -->
-        <div v-if="store.isAdmin" class="admin-tools">
-          <button @click="reset(j.pseudo)">Reset</button>
-          <input
-            type="number"
-            v-model.number="nouveauScore[j.pseudo]"
-            placeholder="Nouveau score"
-          />
-          <button @click="setScore(j.pseudo)">Set Score</button>
-        </div>
-      </li>
-    </ol>
-
-    <h2 v-if="store.defis.length > 0">⚔️ Défis lancés</h2>
-    <ul v-if="store.defis.length > 0" class="defis-list">
-      <li v-for="(d, i) in store.defis" :key="i">
-        {{ d.from }} a défié {{ d.to }} ({{ formatDate(d.date) }})
-      </li>
-    </ul>
+              <!-- Sinon on peut défier -->
+              <button
+                v-else
+                class="btn-defi"
+                @click="defier(j.pseudo)"
+              >
+                Défier
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
 <script setup>
-import { reactive } from "vue"
-import { useGameStore } from "../store/gameStore"
-
+import { useGameStore } from '../store/gameStore'
 const store = useGameStore()
-const nouveauScore = reactive({})
 
-function defier(pseudo) {
+// Enregistrer le score du joueur actif
+function enregistrerMonScore() {
+  if (store.utilisateurActif) {
+    store.enregistrerJoueur(store.utilisateurActif.pseudo)
+    alert("Ton score a été enregistré")
+  } else {
+    alert("Connecte-toi pour enregistrer ton score")
+  }
+}
+
+// Vérifier si on a déjà lancé un défi à ce joueur
+function aDejaDefie(pseudoCible) {
+  if (!store.utilisateurActif) return false
+  return store.defis.some(
+    d => d.from === store.utilisateurActif.pseudo && d.to === pseudoCible
+  )
+}
+
+// Lancer un défi
+function defier(pseudoCible) {
   try {
-    store.defierJoueur(pseudo)
-    alert("Défi envoyé à " + pseudo + " !")
+    store.defierJoueur(pseudoCible)
+    alert(`Défi lancé contre ${pseudoCible} !`)
   } catch (e) {
     alert(e.message)
   }
 }
 
-function reset(pseudo) {
-  try {
-    store.adminReset(pseudo)
-    alert("Score de " + pseudo + " réinitialisé.")
-  } catch (e) {
-    alert(e.message)
-  }
-}
-
-function setScore(pseudo) {
-  try {
-    const score = nouveauScore[pseudo]
-    if (!score || score < 0) return alert("Score invalide")
-    store.adminSetScore(pseudo, score)
-    alert("Score mis à jour pour " + pseudo)
-  } catch (e) {
-    alert(e.message)
-  }
-}
-
-function formatDate(ts) {
-  return new Date(ts).toLocaleString()
+// Annuler un défi
+function annulerDefi(pseudoCible) {
+  if (!store.utilisateurActif) return
+  store.defis = store.defis.filter(
+    d => !(d.from === store.utilisateurActif.pseudo && d.to === pseudoCible)
+  )
+  store.sauvegarder()
+  alert(`Défi contre ${pseudoCible} annulé`)
 }
 </script>
 
@@ -86,56 +98,54 @@ function formatDate(ts) {
   color: #fff;
 }
 
-.leaderboard {
-  list-style: none;
-  padding: 0;
-  margin: 20px auto;
-  max-width: 600px;
+.save-score {
+  margin-bottom: 20px;
 }
 
-.leaderboard li {
-  background: #111;
-  border: 2px solid #ff005c;
-  border-radius: 12px;
-  padding: 15px;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.pseudo {
-  font-weight: bold;
-  color: #ff66b2;
-}
-
-.score {
-  margin-left: auto;
-  margin-right: 15px;
-}
-
-.defi {
-  background: #ff005c;
+button {
+  padding: 8px 15px;
+  border-radius: 8px;
   border: none;
-  padding: 5px 10px;
-  border-radius: 6px;
-  color: white;
+  color: #fff;
   cursor: pointer;
+  transition: 0.2s;
+}
+button:hover { opacity: 0.85; }
+
+.btn-save {
+  background: #ff005c;
+}
+.btn-defi {
+  background: #0077ff;
+}
+.btn-cancel {
+  background: #b30000;
 }
 
-.admin-tools {
-  margin-left: 20px;
-  display: flex;
-  gap: 5px;
-  align-items: center;
+table {
+  margin: 0 auto;
+  border-collapse: collapse;
+  width: 80%;
+  max-width: 900px;
 }
 
-.admin-tools input {
-  width: 100px;
-  padding: 3px;
-  border-radius: 6px;
+th, td {
   border: 1px solid #ff005c;
-  background: #222;
-  color: white;
+  padding: 10px;
+}
+
+th {
+  background: #111;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  table {
+    font-size: 0.9rem;
+    width: 100%;
+  }
+  th, td {
+    padding: 6px;
+  }
 }
 </style>
